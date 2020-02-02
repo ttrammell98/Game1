@@ -11,7 +11,9 @@ namespace MonoGameWindowsStarter
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        Texture2D ball;
+        Texture2D goal;
+        Rectangle goalRect;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -27,6 +29,17 @@ namespace MonoGameWindowsStarter
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            graphics.PreferredBackBufferWidth = 720;
+            graphics.PreferredBackBufferHeight = 480;
+            graphics.ApplyChanges();
+
+            //goal rect settings (whole right side of screen)
+            goalRect.Width = 100;
+            goalRect.Height = graphics.PreferredBackBufferHeight;
+            goalRect.X = graphics.PreferredBackBufferWidth - goalRect.Width;
+            goalRect.Y = 0;
+
+            
 
             base.Initialize();
         }
@@ -41,6 +54,8 @@ namespace MonoGameWindowsStarter
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            goal = Content.Load<Texture2D>("soccer-goal-top-png");
+            ball = Content.Load<Texture2D>("ball");
         }
 
         /// <summary>
@@ -76,6 +91,11 @@ namespace MonoGameWindowsStarter
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            spriteBatch.Draw(goal, goalRect, Color.White);
+            spriteBatch.Draw(ball, new Rectangle(0, 240, 50, 50), Color.White);
+            spriteBatch.End();
+
 
             base.Draw(gameTime);
         }
