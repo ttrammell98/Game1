@@ -13,7 +13,11 @@ namespace MonoGameWindowsStarter
         SpriteBatch spriteBatch;
         Texture2D ball;
         Texture2D goal;
+        Texture2D goalkeeper;
         Rectangle goalRect;
+        Rectangle ballRect;
+        Rectangle goalkeeperRect;
+       
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -39,6 +43,17 @@ namespace MonoGameWindowsStarter
             goalRect.X = graphics.PreferredBackBufferWidth - goalRect.Width;
             goalRect.Y = 0;
 
+            //ball rect settings (left side middle of screen)
+            ballRect.Width = 40;
+            ballRect.Height = 40;
+            ballRect.X = 0;
+            ballRect.Y = 220;
+
+            goalkeeperRect.Width = 90;
+            goalkeeperRect.Height = 80;
+            goalkeeperRect.X = graphics.PreferredBackBufferWidth - goalRect.Width - goalkeeperRect.Width;
+            goalkeeperRect.Y = 198;
+
             
 
             base.Initialize();
@@ -56,6 +71,7 @@ namespace MonoGameWindowsStarter
             // TODO: use this.Content to load your game content here
             goal = Content.Load<Texture2D>("soccer-goal-top-png");
             ball = Content.Load<Texture2D>("ball");
+            goalkeeper = Content.Load<Texture2D>("goalie");
         }
 
         /// <summary>
@@ -88,12 +104,14 @@ namespace MonoGameWindowsStarter
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            //GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             spriteBatch.Draw(goal, goalRect, Color.White);
-            spriteBatch.Draw(ball, new Rectangle(0, 240, 50, 50), Color.White);
+            spriteBatch.Draw(ball, ballRect, Color.White);
+            spriteBatch.Draw(goalkeeper, goalkeeperRect, Color.White);
             spriteBatch.End();
 
 
