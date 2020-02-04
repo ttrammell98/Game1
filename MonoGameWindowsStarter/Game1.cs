@@ -21,8 +21,10 @@ namespace MonoGameWindowsStarter
         Rectangle goalkeeperRect;
         int goalSpeed = 6;
         Random random = new Random();
-        Vector2 ballVelocity;
+        //Vector2 ballVelocity;
         Vector2 ballPosition = Vector2.Zero;
+        SpriteFont font;
+        int score = 0;
 
         public Game1()
         {
@@ -60,8 +62,8 @@ namespace MonoGameWindowsStarter
             goalkeeperRect.X = graphics.PreferredBackBufferWidth - goalRect.Width - goalkeeperRect.Width;
             goalkeeperRect.Y = 198;
 
-            ballVelocity = new Vector2((float)random.Next(10), (float)random.NextDouble());
-            ballVelocity.Normalize();
+            //ballVelocity = new Vector2((float)random.Next(10), (float)random.NextDouble());
+            //ballVelocity.Normalize();
 
             base.Initialize();
         }
@@ -79,6 +81,7 @@ namespace MonoGameWindowsStarter
             goal = Content.Load<Texture2D>("soccer-goal-top-png");
             ball = Content.Load<Texture2D>("ball");
             goalkeeper = Content.Load<Texture2D>("goalie");
+            font = Content.Load<SpriteFont>("score");
         }
 
         /// <summary>
@@ -101,6 +104,15 @@ namespace MonoGameWindowsStarter
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            if (keyboardState.IsKeyDown(Keys.Escape))
+            {
+                Exit();
+            }
+            if (keyboardState.IsKeyDown(Keys.L))
+            {
+                this.Reset();
+            }
+
             //up and down buttons for gameplay
             if (keyboardState.IsKeyDown(Keys.Down))
             {
@@ -112,19 +124,19 @@ namespace MonoGameWindowsStarter
             }
 
 
-            ballPosition += 5 * ballVelocity;
+            ballRect.X += 5;
             
 
             //checking for wall collisions with ball
             if(ballPosition.Y < 0)
             {
-                ballVelocity.Y *= -1;
+                //ballVelocity.Y *= -1;
                 float delta = 0 - ballPosition.Y;
                 ballPosition.Y += 2 * delta;
             }
             if(ballPosition.Y > graphics.PreferredBackBufferHeight - ballRect.Height)
             {
-                ballVelocity.Y *= -1;
+                //ballVelocity.Y *= -1;
                 float delta = graphics.PreferredBackBufferHeight - ballRect.Height - ballPosition.Y;
                 ballPosition.Y += 2 * delta;
             }
@@ -133,8 +145,19 @@ namespace MonoGameWindowsStarter
                 ballPosition.X = graphics.PreferredBackBufferWidth - ballRect.Width;
                 ballPosition.Y = ballRect.Y;
             }
-            ballRect.X = (int)ballPosition.X;
-            ballRect.Y = (int)ballPosition.Y;
+            //ballRect.X = (int)ballPosition.X;
+            //ballRect.Y = (int)ballPosition.Y;
+            //checking ball collision with goal keeper
+            if (!(ballRect.X > goalkeeperRect.X + goalkeeperRect.Width || ballRect.X + ballRect.Width < goalkeeperRect.X || ballRect.Y > goalkeeperRect.Height || ballRect.Y + ballRect.Height < goalkeeperRect.Y)) //colliding
+            {
+                ballPosition.X = 0;
+                ballPosition.Y = 215; 
+                score += 1;
+            }
+
+
+
+            
 
 
 
@@ -167,10 +190,17 @@ namespace MonoGameWindowsStarter
             spriteBatch.Draw(goal, goalRect, Color.White);
             spriteBatch.Draw(ball, ballRect, Color.White);
             spriteBatch.Draw(goalkeeper, goalkeeperRect, Color.White);
+            spriteBatch.DrawString(font, "Score: " + score, new Vector2(0, 0), Color.Black);
             spriteBatch.End();
 
 
             base.Draw(gameTime);
+        }
+
+        private void Reset()
+        {
+            score = 0;
+            this.Initialize();
         }
     }
 }
