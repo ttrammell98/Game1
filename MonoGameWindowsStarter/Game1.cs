@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace MonoGameWindowsStarter
 {
@@ -11,13 +12,18 @@ namespace MonoGameWindowsStarter
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        KeyboardState keyboardState;
         Texture2D ball;
         Texture2D goal;
         Texture2D goalkeeper;
         Rectangle goalRect;
         Rectangle ballRect;
         Rectangle goalkeeperRect;
-       
+        int goalSpeed = 6;
+        Random random = new Random();
+        Vector2 ballVelocity;
+        Vector2 ballPosition = Vector2.Zero;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -54,7 +60,8 @@ namespace MonoGameWindowsStarter
             goalkeeperRect.X = graphics.PreferredBackBufferWidth - goalRect.Width - goalkeeperRect.Width;
             goalkeeperRect.Y = 198;
 
-            
+            ballVelocity = new Vector2((float)random.Next(10), (float)random.NextDouble());
+            ballVelocity.Normalize();
 
             base.Initialize();
         }
@@ -90,8 +97,56 @@ namespace MonoGameWindowsStarter
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            keyboardState = Keyboard.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            //up and down buttons for gameplay
+            if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                goalkeeperRect.Y += goalSpeed;
+            }
+            if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                goalkeeperRect.Y -= goalSpeed;
+            }
+
+
+            ballPosition += 5 * ballVelocity;
+            
+
+            //checking for wall collisions with ball
+            if(ballPosition.Y < 0)
+            {
+                ballVelocity.Y *= -1;
+                float delta = 0 - ballPosition.Y;
+                ballPosition.Y += 2 * delta;
+            }
+            if(ballPosition.Y > graphics.PreferredBackBufferHeight - ballRect.Height)
+            {
+                ballVelocity.Y *= -1;
+                float delta = graphics.PreferredBackBufferHeight - ballRect.Height - ballPosition.Y;
+                ballPosition.Y += 2 * delta;
+            }
+            if(ballPosition.X > graphics.PreferredBackBufferWidth - ballRect.Width)
+            {
+                ballPosition.X = graphics.PreferredBackBufferWidth - ballRect.Width;
+                ballPosition.Y = ballRect.Y;
+            }
+            ballRect.X = (int)ballPosition.X;
+            ballRect.Y = (int)ballPosition.Y;
+
+
+
+            //logic for goalkeeper to stay onscreen
+            if (goalkeeperRect.Y < 0)
+            {
+                goalkeeperRect.Y = 0;
+            }
+            if(goalkeeperRect.Y + goalkeeperRect.Height > GraphicsDevice.Viewport.Height)
+            {
+                goalkeeperRect.Y = GraphicsDevice.Viewport.Height - goalkeeperRect.Height;
+            }
 
             // TODO: Add your update logic here
 
