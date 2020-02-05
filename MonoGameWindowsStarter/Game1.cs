@@ -121,7 +121,6 @@ namespace MonoGameWindowsStarter
 
 
             ballRect.X += random.Next(3, 11); //randomizing speed
-            Console.WriteLine(ballRect.X);
             
 
             if(ballRect.X > graphics.PreferredBackBufferWidth - ballRect.Width)
