@@ -21,7 +21,6 @@ namespace MonoGameWindowsStarter
         Rectangle goalkeeperRect;
         int goalSpeed = 6;
         Random random = new Random();
-        //Vector2 ballVelocity;
         Vector2 ballPosition = Vector2.Zero;
         SpriteFont font;
         int score = 0;
@@ -55,15 +54,12 @@ namespace MonoGameWindowsStarter
             ballRect.Width = 40;
             ballRect.Height = 40;
             ballRect.X = 0;
-            ballRect.Y = 220;
+            ballRect.Y = RandomizeY(ballRect);
 
             goalkeeperRect.Width = 90;
             goalkeeperRect.Height = 80;
             goalkeeperRect.X = graphics.PreferredBackBufferWidth - goalRect.Width - goalkeeperRect.Width;
             goalkeeperRect.Y = 198;
-
-            //ballVelocity = new Vector2((float)random.Next(10), (float)random.NextDouble());
-            //ballVelocity.Normalize();
 
             base.Initialize();
         }
@@ -108,7 +104,7 @@ namespace MonoGameWindowsStarter
             {
                 Exit();
             }
-            if (keyboardState.IsKeyDown(Keys.L))
+            if (keyboardState.IsKeyDown(Keys.Tab))
             {
                 this.Reset();
             }
@@ -124,40 +120,31 @@ namespace MonoGameWindowsStarter
             }
 
 
-            ballRect.X += 5;
+            ballRect.X += random.Next(3, 11); //randomizing speed
+            Console.WriteLine(ballRect.X);
             
 
-            //checking for wall collisions with ball
-            if(ballPosition.Y < 0)
+            if(ballRect.X > graphics.PreferredBackBufferWidth - ballRect.Width)
             {
-                //ballVelocity.Y *= -1;
-                float delta = 0 - ballPosition.Y;
-                ballPosition.Y += 2 * delta;
-            }
-            if(ballPosition.Y > graphics.PreferredBackBufferHeight - ballRect.Height)
-            {
-                //ballVelocity.Y *= -1;
-                float delta = graphics.PreferredBackBufferHeight - ballRect.Height - ballPosition.Y;
-                ballPosition.Y += 2 * delta;
-            }
-            if(ballPosition.X > graphics.PreferredBackBufferWidth - ballRect.Width)
-            {
-                ballPosition.X = graphics.PreferredBackBufferWidth - ballRect.Width;
+                ballRect.X = graphics.PreferredBackBufferWidth - ballRect.Width;
                 ballPosition.Y = ballRect.Y;
+                System.Threading.Thread.Sleep(1250); //wait 1.25 seconds before sending ball back
+                SendBallBack();   
             }
-            //ballRect.X = (int)ballPosition.X;
-            //ballRect.Y = (int)ballPosition.Y;
-            //checking ball collision with goal keeper
-            if (!(ballRect.X > goalkeeperRect.X + goalkeeperRect.Width || ballRect.X + ballRect.Width < goalkeeperRect.X || ballRect.Y > goalkeeperRect.Height || ballRect.Y + ballRect.Height < goalkeeperRect.Y)) //colliding
+
+            if((ballRect.X < goalkeeperRect.X + goalkeeperRect.Width) && (goalkeeperRect.X < (ballRect.X + ballRect.Width)) && (ballRect.Y < goalkeeperRect.Y + goalkeeperRect.Height) && (goalkeeperRect.Y < ballRect.Y + ballRect.Height))
             {
-                ballPosition.X = 0;
-                ballPosition.Y = 215; 
+                ballRect.X = 0;
+                ballRect.Y = RandomizeY(ballRect);
                 score += 1;
             }
 
-
-
-            
+            //if(ballRect.Intersects(goalkeeperRect))
+            //{
+            //    ballRect.X = 0;
+            //    ballRect.Y = RandomizeY(ballRect);
+            //    score += 1;
+            //}
 
 
 
@@ -197,10 +184,39 @@ namespace MonoGameWindowsStarter
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Resets the game / score goes back to 0. Used when tab is clicked
+        /// </summary>
         private void Reset()
         {
             score = 0;
             this.Initialize();
+        }
+
+        /// <summary>
+        /// Resetting the game but keeping the score
+        /// </summary>
+        private void SendBallBack()
+        {
+            ballRect.Width = 40;
+            ballRect.Height = 40;
+            ballRect.X = 0;
+            ballRect.Y = RandomizeY(ballRect);
+
+            goalkeeperRect.Width = 90;
+            goalkeeperRect.Height = 80;
+            goalkeeperRect.X = graphics.PreferredBackBufferWidth - goalRect.Width - goalkeeperRect.Width;
+            goalkeeperRect.Y = 198;
+        }
+        /// <summary>
+        /// Randomizing the Y value 
+        /// </summary>
+        /// <param name="rect">rectangle to randomize the y</param>
+        /// <returns></returns>
+        private int RandomizeY(Rectangle rect)
+        {
+            rect.Y = random.Next(0, graphics.PreferredBackBufferHeight - ballRect.Height);
+            return rect.Y;
         }
     }
 }
