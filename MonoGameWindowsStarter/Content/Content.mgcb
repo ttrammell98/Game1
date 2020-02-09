@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:ball.png
 
+#begin booing.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:booing.wav
+
 #begin File.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -43,6 +49,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:goalie.png
+
+#begin Powerup2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Powerup2.wav
 
 #begin soccer-goal-top-png.png
 /importer:TextureImporter

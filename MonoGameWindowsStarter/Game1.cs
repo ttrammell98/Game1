@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using Microsoft.Xna.Framework.Audio;
 
 namespace MonoGameWindowsStarter
 {
@@ -24,6 +25,8 @@ namespace MonoGameWindowsStarter
         Vector2 ballPosition = Vector2.Zero;
         SpriteFont font;
         int score = 0;
+        SoundEffect blockSFX;
+        SoundEffect booSFX;
 
         public Game1()
         {
@@ -78,6 +81,8 @@ namespace MonoGameWindowsStarter
             ball = Content.Load<Texture2D>("ball");
             goalkeeper = Content.Load<Texture2D>("goalie");
             font = Content.Load<SpriteFont>("score");
+            blockSFX = Content.Load<SoundEffect>("Powerup2");
+            booSFX = Content.Load<SoundEffect>("booing");
         }
 
         /// <summary>
@@ -127,6 +132,8 @@ namespace MonoGameWindowsStarter
             {
                 ballRect.X = graphics.PreferredBackBufferWidth - ballRect.Width;
                 ballPosition.Y = ballRect.Y;
+                booSFX.Play();
+                score -= 1;
                 System.Threading.Thread.Sleep(1250); //wait 1.25 seconds before sending ball back
                 SendBallBack();   
             }
@@ -135,6 +142,7 @@ namespace MonoGameWindowsStarter
             {
                 ballRect.X = 0;
                 ballRect.Y = RandomizeY(ballRect);
+                blockSFX.Play();
                 score += 1;
             }
 
