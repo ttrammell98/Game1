@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+ * Tyler Trammell - Game Project 2
+ * Using in-class notes / example as a guide
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,7 +39,7 @@ namespace MonoGameWindowsStarter
         /// <summary>
         /// How quickly the player should move
         /// </summary>
-        const float PLAYER_SPEED = 180;
+        const float PLAYER_SPEED = 185;
 
         /// <summary>
         /// The width of the animation frames

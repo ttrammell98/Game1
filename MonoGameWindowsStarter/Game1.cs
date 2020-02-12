@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*
+ * Tyler Trammell - Game Project 2
+ * 
+ */
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
