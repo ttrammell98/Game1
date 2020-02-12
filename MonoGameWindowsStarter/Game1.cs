@@ -16,22 +16,22 @@ namespace MonoGameWindowsStarter
         KeyboardState keyboardState;
         Texture2D ball;
         Texture2D goal;
-        Texture2D goalkeeper;
+        //Texture2D goalkeeper;
         Rectangle goalRect;
         Rectangle ballRect;
-        Rectangle goalkeeperRect;
-        int goalSpeed = 6;
         Random random = new Random();
         Vector2 ballPosition = Vector2.Zero;
         SpriteFont font;
         int score = 0;
         SoundEffect blockSFX;
         SoundEffect booSFX;
-
+        GoalKeeper goalkeeper;
+        
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            goalkeeper = new GoalKeeper(this);
         }
 
         /// <summary>
@@ -59,11 +59,6 @@ namespace MonoGameWindowsStarter
             ballRect.X = 0;
             ballRect.Y = RandomizeY(ballRect);
 
-            goalkeeperRect.Width = 90;
-            goalkeeperRect.Height = 80;
-            goalkeeperRect.X = graphics.PreferredBackBufferWidth - goalRect.Width - goalkeeperRect.Width;
-            goalkeeperRect.Y = 198;
-
             base.Initialize();
         }
 
@@ -79,7 +74,7 @@ namespace MonoGameWindowsStarter
             // TODO: use this.Content to load your game content here
             goal = Content.Load<Texture2D>("soccer-goal-top-png");
             ball = Content.Load<Texture2D>("ball");
-            goalkeeper = Content.Load<Texture2D>("goalie");
+            goalkeeper.LoadContent();
             font = Content.Load<SpriteFont>("score");
             blockSFX = Content.Load<SoundEffect>("Powerup2");
             booSFX = Content.Load<SoundEffect>("booing");
@@ -114,18 +109,10 @@ namespace MonoGameWindowsStarter
                 this.Reset();
             }
 
-            //up and down buttons for gameplay
-            if (keyboardState.IsKeyDown(Keys.Down))
-            {
-                goalkeeperRect.Y += goalSpeed;
-            }
-            if (keyboardState.IsKeyDown(Keys.Up))
-            {
-                goalkeeperRect.Y -= goalSpeed;
-            }
-
+            goalkeeper.Update(gameTime);
 
             ballRect.X += random.Next(3, 11); //randomizing speed
+
             
 
             if(ballRect.X > graphics.PreferredBackBufferWidth - ballRect.Width)
@@ -135,38 +122,25 @@ namespace MonoGameWindowsStarter
                 booSFX.Play();
                 score -= 1;
                 System.Threading.Thread.Sleep(1250); //wait 1.25 seconds before sending ball back
-                SendBallBack();   
+                SendBallBack();
             }
 
-            if((ballRect.X < goalkeeperRect.X + goalkeeperRect.Width) && (goalkeeperRect.X < (ballRect.X + ballRect.Width)) && (ballRect.Y < goalkeeperRect.Y + goalkeeperRect.Height) && (goalkeeperRect.Y < ballRect.Y + ballRect.Height))
+            if((ballRect.X < goalkeeper.position.X + goalkeeper.getWidth()) && (goalkeeper.position.X < (ballRect.X + ballRect.Width)) && (ballRect.Y < goalkeeper.position.Y + goalkeeper.getHeight()) && (goalkeeper.position.Y < ballRect.Y + ballRect.Height))
             {
                 ballRect.X = 0;
                 ballRect.Y = RandomizeY(ballRect);
                 blockSFX.Play();
                 score += 1;
             }
-
-            //if(ballRect.Intersects(goalkeeperRect))
-            //{
-            //    ballRect.X = 0;
-            //    ballRect.Y = RandomizeY(ballRect);
-            //    score += 1;
-            //}
-
-
-
             //logic for goalkeeper to stay onscreen
-            if (goalkeeperRect.Y < 0)
-            {
-                goalkeeperRect.Y = 0;
-            }
-            if(goalkeeperRect.Y + goalkeeperRect.Height > GraphicsDevice.Viewport.Height)
-            {
-                goalkeeperRect.Y = GraphicsDevice.Viewport.Height - goalkeeperRect.Height;
-            }
-
-            // TODO: Add your update logic here
-
+            //if (goalkeeperRect.Y < 0)
+            //{
+            //    goalkeeperRect.Y = 0;
+            //}
+            //if(goalkeeperRect.Y + goalkeeperRect.Height > GraphicsDevice.Viewport.Height)
+            //{
+            //    goalkeeperRect.Y = GraphicsDevice.Viewport.Height - goalkeeperRect.Height;
+            //}
             base.Update(gameTime);
         }
 
@@ -183,7 +157,7 @@ namespace MonoGameWindowsStarter
             spriteBatch.Begin();
             spriteBatch.Draw(goal, goalRect, Color.White);
             spriteBatch.Draw(ball, ballRect, Color.White);
-            spriteBatch.Draw(goalkeeper, goalkeeperRect, Color.White);
+            goalkeeper.Draw(spriteBatch);
             spriteBatch.DrawString(font, "Score: " + score, new Vector2(0, 0), Color.Black);
             spriteBatch.End();
 
@@ -210,10 +184,7 @@ namespace MonoGameWindowsStarter
             ballRect.X = 0;
             ballRect.Y = RandomizeY(ballRect);
 
-            goalkeeperRect.Width = 90;
-            goalkeeperRect.Height = 80;
-            goalkeeperRect.X = graphics.PreferredBackBufferWidth - goalRect.Width - goalkeeperRect.Width;
-            goalkeeperRect.Y = 198;
+            goalkeeper.position.Y = 200;
         }
         /// <summary>
         /// Randomizing the Y value 
